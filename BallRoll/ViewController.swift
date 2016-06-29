@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         ballRadious = 32.0
-        trend = "phai"
+        trend = "giuaPhai"
         L = ballRadious * deltaAngle
         addBall()
         let timer = NSTimer.scheduledTimerWithTimeInterval(0.02, target: self, selector: #selector(rollBall), userInfo: nil, repeats: true)
@@ -34,27 +34,56 @@ class ViewController: UIViewController {
     }
     
     func runBall(trend: String) {
-        if trend == "phai" {
+        let rong = self.view.bounds.width
+        let dai = self.view.bounds.height
+        let cheo = sqrt(rong * rong + dai * dai)
+        let beta = dai / cheo
+        let alpha = rong / cheo
+        let cheo1 = sqrt(rong * rong + dai * dai / 4)
+        let beta1 = dai * 0.5 / cheo1
+         let alpha1 = rong / cheo1
+
+        
+        if trend == "giuaPhai" {
             ball.center = CGPointMake(ball.center.x + L, ball.center.y)
-        } else {
-            ball.center = CGPointMake(ball.center.x - L, ball.center.y)
+            
         }
+        if trend == "trenTrai" {
+            ball.center = CGPointMake(ball.center.x - L * alpha1 , ball.center.y - L * beta1)
+        }
+        if trend == "duoiPhai" {
+           
+            ball.center = CGPointMake(ball.center.x + L * alpha , ball.center.y + L * beta)
+        }
+        if trend == "giuaTrai" {
+            ball.center = CGPointMake(ball.center.x - L * alpha1 , ball.center.y - L * beta1)
+        }
+
+        
     }
     
     func nextTrend() -> String {
-        if (self.trend == "phai") && (ball.center.x + L > self.view.bounds.size.width - ballRadious) {
-            return "trai"
+        
+         ball.transform = CGAffineTransformMakeRotation(radians)
+        if (self.trend == "giuaPhai") && (ball.center.x + L > self.view.bounds.size.width - ballRadious) {
+            return "trenTrai"
         }
-        if (self.trend == "trai") && (ball.center.x - L < ballRadious) {
-            return "phai"
+        if (self.trend == "trenTrai") && (ball.center.x - L < ballRadious) {
+            return "duoiPhai"
         }
+        if (self.trend == "duoiPhai") && (ball.center.x + L > self.view.bounds.size.width - ballRadious) {
+            return "giuaTrai"
+        }
+        if (self.trend == "giuaTrai") && (ball.center.x - L < ballRadious) {
+            return "giuaPhai"
+        }
+
         return self.trend
         
     }
     
     func rollBall() {
         radians = radians + deltaAngle
-        ball.transform = CGAffineTransformMakeRotation(radians)
         trend = nextTrend()
         runBall(trend)
     }
